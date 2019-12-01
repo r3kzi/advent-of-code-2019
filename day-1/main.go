@@ -24,19 +24,17 @@ func main() {
 		}
 		byteToInt, _ := strconv.Atoi(string(mass))
 
-		fuel := CalculateFuel(byteToInt, 0)
+		fuel := CalculateFuel(byteToInt)
 
 		sum += fuel
 	}
 	fmt.Println(sum)
 }
 
-func CalculateFuel(mass int, total int) int {
+func CalculateFuel(mass int) int {
 	fuel := (mass / 3) - 2
 	if fuel <= 0 {
-		// negative fuel = zero fuel
-		return total
+		return 0
 	}
-	total += fuel
-	return CalculateFuel(fuel, total)
+	return fuel + CalculateFuel(fuel)
 }
