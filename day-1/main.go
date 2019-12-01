@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"math"
 	"os"
 	"strconv"
 )
@@ -33,7 +32,7 @@ func main() {
 }
 
 func CalculateFuel(mass int, total int) int {
-	fuel := int((math.Floor(float64(mass)) / 3) - 2)
+	fuel := (mass / 3) - 2
 	if fuel <= 0 {
 		// negative fuel = zero fuel
 		return total
