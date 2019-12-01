@@ -13,7 +13,7 @@ func main() {
 		panic(err)
 	}
 	defer file.Close()
-	
+
 	reader := bufio.NewReader(file)
 
 	var sum = 0
