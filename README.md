@@ -4,5 +4,6 @@
 
 ## Solutions
 
-- [day-1](day-1/README.md)
-- [day-2](day-2/README.md)
+- [day-1](day-1/)
+- [day-2](day-2/)
+- [day-3](day-3/)
