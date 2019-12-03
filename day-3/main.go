@@ -26,27 +26,20 @@ func main() {
 
 	closestManhattan, closestSteps := math.MaxFloat64, math.MaxFloat64
 	for _, intersection := range intersections {
-		closestManhattan = math.Min(closestManhattan, calculateManhattan(intersection))
+		closestManhattan = math.Min(closestManhattan, math.Abs(float64(intersection.x)) + math.Abs(float64(intersection.y)))
 		closestSteps = math.Min(closestSteps, float64(posA[intersection]+posB[intersection]))
 	}
 	fmt.Println(closestManhattan)
 	fmt.Println(closestSteps)
 }
 
-func calculateManhattan(pos Position) float64 {
-	return math.Abs(float64(pos.x)) + math.Abs(float64(pos.y))
-}
-
 func getIntersections(posA map[Position]int, posB map[Position]int) []Position {
 	intersections := make([]Position, 0)
 	for keyA, _ := range posA {
-		for keyB, _ := range posB {
-			if keyA == keyB {
-				intersections = append(intersections, keyA)
-			}
+		if _, ok := posB[keyA]; ok {
+			intersections = append(intersections, keyA)
 		}
 	}
-
 	return intersections
 }
 
