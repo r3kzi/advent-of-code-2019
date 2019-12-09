@@ -1,4 +1,4 @@
-# Advent of Code 2019
+# Advent of Code 2019 🎄☃️🎁
 
 #### What is [Advent of Code](https://adventofcode.com/)?
 
@@ -8,11 +8,11 @@
 
 #### My solutions in Golang
 
-- [day-1](day-1)
-- [day-2](day-2)
-- [day-3](day-3)
-- [day-4](day-4)
-- [day-5](day-5)
-- [day-6](day-6)
-- [day-7](day-7)
-- [day-8](day-8)
+- [📝 day-1](day-1)
+- [📝 day-2](day-2)
+- [📝 day-3](day-3)
+- [📝 day-4](day-4)
+- [📝 day-5](day-5)
+- [📝 day-6](day-6)
+- [📝 day-7](day-7)
+- [📝 day-8](day-8)
