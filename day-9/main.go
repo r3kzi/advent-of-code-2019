@@ -31,73 +31,71 @@ func Run(program []int64, input int64, output chan int64) {
 	index = 0
 	relativeBase = 0
 
-	appendIfNecessary := func(address int64) *int64 {
-		for int64(len(integers)) <= address {
-			integers = append(integers, 0)
-		}
-		return &integers[address]
-	}
-
-	getParameterForMode := func(offset int64, mode int64) *int64 {
-		parameter := integers[index+offset]
-		switch mode {
-		case 0:
-			return appendIfNecessary(parameter)
-		case 1:
-			return &parameter
-		case 2:
-			return appendIfNecessary(parameter + relativeBase)
-		default:
-			panic(fmt.Sprintf("Shouldn't be here - invalid mode %d", mode))
-		}
-	}
-
 	for {
 		instructions := ToArray(integers[index])
+
+		get := func(offset int64) (parameter int64) {
+			switch instructions[offset] {
+			case 0:
+				parameter = integers[index+offset]
+			case 1:
+				parameter = index+offset
+			case 2:
+				parameter = integers[index+offset] + relativeBase
+			default:
+				panic(fmt.Sprintf("Shouldn't be here - invalid mode %d", instructions[3-offset]))
+			}
+			for int64(len(integers)) <= parameter {
+				integers = append(integers, 0)
+			}
+			return
+		}
+
+		first, second, third := get(1), get(2), get(3)
 
 		switch instructions[0] { // check opcode
 		case 99: // output
 			return
 		case 1: // add
-			*getParameterForMode(3, instructions[3]) = *getParameterForMode(1, instructions[1]) + *getParameterForMode(2, instructions[2])
+			integers[third] = integers[first] + integers[second]
 			index += 4
 		case 2: // multiply
-			*getParameterForMode(3, instructions[3]) = *getParameterForMode(1, instructions[1]) * *getParameterForMode(2, instructions[2])
+			integers[third] = integers[first] * integers[second]
 			index += 4
 		case 3: // save input
-			*getParameterForMode(1, instructions[1]) = input
+			integers[first] = input
 			index += 2
 		case 4: // output
-			output <- *getParameterForMode(1, instructions[1])
+			output <- integers[first]
 			index += 2
 		case 5: // jump-if-true
-			if *getParameterForMode(1, instructions[1]) != 0 {
-				index = *getParameterForMode(2, instructions[2])
+			if integers[first] != 0 {
+				index = integers[second]
 			} else {
 				index += 3
 			}
 		case 6: // jump-if-false
-			if *getParameterForMode(1, instructions[1]) == 0 {
-				index = *getParameterForMode(2, instructions[2])
+			if integers[first] == 0 {
+				index = integers[second]
 			} else {
 				index += 3
 			}
 		case 7: // less than
-			if *getParameterForMode(1, instructions[1]) < *getParameterForMode(2, instructions[2]) {
-				*getParameterForMode(3, instructions[3]) = 1
+			if integers[first] < integers[second] {
+				integers[third] = 1
 			} else {
-				*getParameterForMode(3, instructions[3]) = 0
+				integers[third] = 0
 			}
 			index += 4
 		case 8: // equals
-			if *getParameterForMode(1, instructions[1]) == *getParameterForMode(2, instructions[2]) {
-				*getParameterForMode(3, instructions[3]) = 1
+			if integers[first] == integers[second] {
+				integers[third] = 1
 			} else {
-				*getParameterForMode(3, instructions[3]) = 0
+				integers[third] = 0
 			}
 			index += 4
 		case 9: // adjusts the relative base
-			relativeBase += *getParameterForMode(1, instructions[1])
+			relativeBase += integers[first]
 			index += 2
 		default:
 			panic(fmt.Sprintf("Shouldn't be here - invalid opcode %d", instructions[0]))
