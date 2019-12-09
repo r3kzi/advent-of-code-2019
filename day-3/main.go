@@ -14,48 +14,43 @@ type Position struct {
 }
 
 func main() {
-	file, err := ioutil.ReadFile("input.txt")
-	if err != nil {
-		panic(err)
+	file, _ := ioutil.ReadFile("input.txt")
+
+	positionsA := forWire(strings.Split(string(file), "\n")[0])
+	positionsB := forWire(strings.Split(string(file), "\n")[1])
+
+	closestManhattan, closestSteps := math.MaxInt64, math.MaxInt64
+
+	for _, intersection := range intersectionsOf(positionsA, positionsB) {
+		closestManhattan = min(closestManhattan, abs(intersection.x, intersection.y))
+		closestSteps = min(closestSteps, positionsA[intersection]+positionsB[intersection])
 	}
 
-	posA := getPosForWire(strings.Split(string(file), "\n")[0])
-	posB := getPosForWire(strings.Split(string(file), "\n")[1])
-
-	intersections := getIntersections(posA, posB)
-
-	closestManhattan, closestSteps := math.MaxFloat64, math.MaxFloat64
-	for _, intersection := range intersections {
-		closestManhattan = math.Min(closestManhattan, math.Abs(float64(intersection.x)) + math.Abs(float64(intersection.y)))
-		closestSteps = math.Min(closestSteps, float64(posA[intersection]+posB[intersection]))
-	}
+	fmt.Println("--- Part One ---")
 	fmt.Println(closestManhattan)
+
+	fmt.Println("--- Part Two ---")
 	fmt.Println(closestSteps)
 }
 
-func getIntersections(posA map[Position]int, posB map[Position]int) []Position {
-	intersections := make([]Position, 0)
-	for keyA, _ := range posA {
-		if _, ok := posB[keyA]; ok {
-			intersections = append(intersections, keyA)
+func intersectionsOf(positionsA map[Position]int, positionsB map[Position]int) (intersections []Position) {
+	intersections = make([]Position, 0)
+	for position, _ := range positionsA {
+		if _, ok := positionsB[position]; ok {
+			intersections = append(intersections, position)
 		}
 	}
-	return intersections
+	return
 }
 
-func getPosForWire(wire string) map[Position]int {
-	positions := make(map[Position]int)
-
-	position := Position{
-		x: 0,
-		y: 0,
-	}
+func forWire(wire string) (positions map[Position]int) {
+	positions = make(map[Position]int)
+	position := Position{x: 0, y: 0}
 
 	var steps = 0
 	for _, segment := range strings.Split(wire, ",") {
-		direction := string(segment[0])
 		for i := 0; i < toInt(segment[1:]); i++ {
-			switch direction {
+			switch string(segment[0]) {
 			case "R":
 				position.x += 1
 			case "L":
@@ -69,13 +64,21 @@ func getPosForWire(wire string) map[Position]int {
 			positions[position] = steps
 		}
 	}
-	return positions
+	return
 }
 
 func toInt(s string) int {
-	atoi, err := strconv.Atoi(s)
-	if err != nil {
-		panic(err)
-	}
+	atoi, _ := strconv.Atoi(s)
 	return atoi
+}
+
+func min(a int, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func abs(a int, b int) int {
+	return int(math.Abs(float64(a)) + math.Abs(float64(b)))
 }
