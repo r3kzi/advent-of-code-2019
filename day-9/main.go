@@ -24,15 +24,13 @@ func main() {
 
 func Run(program []int64, input int64, output chan int64) {
 	integers := make([]int64, len(program))
+
 	copy(integers, program)
 
-	var index, relativeBase int64
-
-	index = 0
-	relativeBase = 0
+	var index, relativeBase int64 = 0,0
 
 	for {
-		instructions := ToArray(integers[index])
+		instructions := parseInstructionSet(integers[index])
 
 		get := func(offset int64) (parameter int64) {
 			switch instructions[offset] {
@@ -110,20 +108,16 @@ func read(fileName string) []int64 {
 	}
 	ints := make([]int64, 0)
 	for _, s := range strings.Split(string(file), ",") {
-		i, err := strconv.Atoi(s)
+		i, err := strconv.ParseInt(s,10, 64)
 		if err != nil {
 			panic(err)
 		}
-		ints = append(ints, int64(i))
+		ints = append(ints, i)
 	}
 	return ints
 }
 
-func ToArray(index int64) []int64 {
-	ints := make([]int64, 0)
-	ints = append(ints, index%100)      // opcode
-	ints = append(ints, index/100%10)   // mode 1
-	ints = append(ints, index/1000%10)  // mode 2
-	ints = append(ints, index/10000%10) // mode 3
+func parseInstructionSet(index int64) (ints []int64) {
+	ints = append(ints, index%100, index/100%10, index/1000%10, index/10000%10)
 	return ints
 }
